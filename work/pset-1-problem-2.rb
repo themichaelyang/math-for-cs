@@ -97,8 +97,6 @@ def permute_variables(variables)
   end
 end
 
-formula = (var(:x) + var(:y)) * var(:z)
-
 def permute_formula(formula)
   variables = get_variables(formula)
   permutations = permute_variables(variables)
@@ -109,5 +107,5 @@ end
 
 P, Q, R = var(:P), var(:Q), var(:R)
 
-p permute_formula(!(P + (Q * R))) == permute_formula(!P * (!Q + !R))
-p permute_formula(!(P * (Q + R))) == permute_formula(!P + (!Q + !R))
+puts permute_formula(!(P + (Q * R))) == permute_formula(!P * (!Q + !R))
+puts permute_formula(!(P * (Q + R))) == permute_formula(!P + (!Q + !R))
