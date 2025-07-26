@@ -105,7 +105,46 @@ def permute_formula(formula)
   end.to_h
 end
 
+def truth_table(permutations)
+  variables = permutations.first.first.keys
+
+  rows = permutations.map do |perm|
+    labeled_inputs, output = perm
+    
+    variables.map {|var| labeled_inputs[var]} + [output]
+  end
+
+  [variables + ['out']] + rows
+end
+
+def display_table(table)
+  header = table.first.map do |col|
+    col.to_s.ljust(5)
+  end.join(" | ")
+
+  row_content = table[1..-1]
+  rows = row_content.map do |row|
+    row.map {|entry| entry.to_s.ljust(5)}.join(" | ")
+  end
+
+  [header] + [[["-" * 5] * table.first.length].join("-+-")] + rows
+end
+
 P, Q, R = var(:P), var(:Q), var(:R)
 
-puts permute_formula(!(P + (Q * R))) == permute_formula(!P * (!Q + !R))
-puts permute_formula(!(P * (Q + R))) == permute_formula(!P + (!Q + !R))
+a_left = !(P + (Q * R))
+a_right = !P * (!Q + !R)
+puts "Problem 2a: #{permute_formula(a_left) == permute_formula(a_right)}"
+
+puts display_table(truth_table(permute_formula(a_left)))
+puts
+puts display_table(truth_table(permute_formula(a_right)))
+puts
+
+b_left = !(P * (Q + R))
+b_right = !P + (!Q + !R)
+puts "Problem 2b: #{permute_formula(b_left) == permute_formula(b_right)}"
+
+puts display_table(truth_table(permute_formula(b_left)))
+puts
+puts display_table(truth_table(permute_formula(b_right)))
