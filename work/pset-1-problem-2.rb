@@ -107,14 +107,7 @@ def permute_formula(formula)
   end.to_h
 end
 
-P = var(:P)
-Q = var(:Q)
-R = var(:R)
+P, Q, R = var(:P), var(:Q), var(:R)
 
-left = !(P + (Q * R))
-right = !P * (!Q + !R)
-
-left_truth_table = permute_formula(left)
-right_truth_table = permute_formula(right)
-
-p left_truth_table == right_truth_table
+p permute_formula(!(P + (Q * R))) == permute_formula(!P * (!Q + !R))
+p permute_formula(!(P * (Q + R))) == permute_formula(!P + (!Q + !R))
