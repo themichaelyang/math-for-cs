@@ -19,13 +19,21 @@ class Variable < Struct.new(:name)
     if binding.include?(name)
       binding[name]
     else
-      raise KeyError
+      raise KeyError.new("no such variable")
     end
   end
 
   def inspect
     name.inspect
   end
+end
+
+class TrueClass
+  def evaluate(_binding); true; end
+end
+
+class FalseClass
+  def evaluate(_binding); false; end
 end
 
 class Operation < Array
@@ -94,7 +102,7 @@ def get_variables(formula)
   when Operation
     formula.flat_map do |element|
       get_variables(element)
-    end.uniq
+    end.uniq.compact
   end
 end
 
@@ -187,6 +195,11 @@ def problem_3
   # puts truth_table(Implies[A, B])
 
   puts "Problem 3b: #{permute_formula(!A) == permute_formula(Nand[A, A])}"
+
+  # Nand[A, !A] = true => Nand[A, Nand[A, A]] = true
+  p permute_formula(A + true)
+  # puts "Problem 3c, i): #{permute_formula(A + true) == permute_formula(Nand[A, Nand[A, A]])}"
+  # puts "Problem 3c, ii): #{permute_formula(A * false) == permute_formula(Nand[A, !A])}"
 end
 
 problem_2
