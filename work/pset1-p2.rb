@@ -8,7 +8,7 @@ module LogicalOperators
   end
 
   def !@
-    Not(self)
+    Not[self]
   end
 end
 
@@ -99,4 +99,16 @@ end
 
 formula = (var(:x) + var(:y)) * var(:z)
 variables = get_variables(formula)
-p permute_variables(variables)
+permutations = permute_variables(variables)
+
+P = var(:P)
+Q = var(:Q)
+R = var(:R)
+
+left = !(P + (Q * R))
+right = !P * (!Q + !R)
+
+p permutations.map do |perm|
+  [perm, left.evaluate(perm)]
+end
+
