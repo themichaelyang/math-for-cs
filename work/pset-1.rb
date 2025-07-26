@@ -15,9 +15,9 @@ end
 class Variable < Struct.new(:name)
   include LogicalOperators
 
-  def evaluate(values)
-    if values.include?(name)
-      values[name]
+  def evaluate(binding)
+    if binding.include?(name)
+      binding[name]
     else
       raise KeyError
     end
@@ -31,6 +31,10 @@ end
 class Operation < Array
   include LogicalOperators
 
+  def evaluate_inner(binding)
+    self.map {|opr| opr.evaluate(binding) }
+  end
+
   def evaluate
     raise NotImplementedError
   end
@@ -41,35 +45,45 @@ class Operation < Array
 end
 
 class Unary < Operation
-  def initialize(operand)
-    super(operand)
+  def initialize(inner)
+    super(inner)
+  end
+end
+
+class Binary < Operation
+  def initialize(left, right)
+    super(left, right)
   end
 end
 
 class And < Operation
-  def evaluate(values)
-    inner = self.map {|opr| opr.evaluate(values) }
-    inner.all?
+  def evaluate(binding)
+    evaluate_inner(binding).all?
   end
 end
 
 class Or < Operation
-  def evaluate(values)
-    inner = self.map {|opr| opr.evaluate(values) }
-    inner.any?
+  def evaluate(binding)
+    evaluate_inner(binding).any?
   end
 end
 
 class Not < Unary
-  def evaluate(values)
-    !self.first.evaluate(values)
+  def evaluate(binding)
+    !(evaluate_inner(binding).first)
   end
 end
 
 class Nand < Operation
-  def evaluate(values)
-    inner = self.map {|opr| opr.evaluate(values) }
-    !(inner.all?)
+  def evaluate(binding)
+    !(evaluate_inner(binding).all?)
+  end
+end
+
+class Implies < Binary
+  def evaluate(binding)
+    left, right = evaluate_inner(binding)
+    !(left && !right)
   end
 end
 
@@ -164,7 +178,10 @@ A, B = var(:A), var(:B)
 def problem_3
   puts "Problem 3a, i): #{permute_formula(A * B) == permute_formula(!Nand[A, B])}"
   puts "Problem 3a, ii): #{permute_formula(A + B) == permute_formula(Nand[!A, !B])}"
-  puts "Problem 3a, iii): #{permute_formula(!A) == permute_formula(Nand[A, A])}"
+  puts "Problem 3a, iii): #{permute_formula(Implies[A, B]) == permute_formula(Nand[A, !B])}"
+  # puts truth_table(Implies[A, B])
+
+  puts "Problem 3b: #{permute_formula(!A) == permute_formula(Nand[A, A])}"
 end
 
 problem_2
