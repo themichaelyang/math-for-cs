@@ -176,8 +176,13 @@ end
 A, B = var(:A), var(:B)
 
 def problem_3
+  # NAND(...) is NOT(AND(...)), so NOT(NOT(AND(...))) = AND(...)
   puts "Problem 3a, i): #{permute_formula(A * B) == permute_formula(!Nand[A, B])}"
+
+  # NAND is only False when both are True, so NOTing each side means both sides to be False to be False.
   puts "Problem 3a, ii): #{permute_formula(A + B) == permute_formula(Nand[!A, !B])}"
+
+  # Similar observation used for Implies, but Implies is only False when RHS is False, so we NOT it.
   puts "Problem 3a, iii): #{permute_formula(Implies[A, B]) == permute_formula(Nand[A, !B])}"
   # puts truth_table(Implies[A, B])
 
