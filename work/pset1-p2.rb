@@ -86,12 +86,12 @@ def permute_variables(variables)
   rest = variables
 
   if current.nil?
-    [[]]
+    [{}]
   else
     permute_variables(rest).flat_map do |permutation|
       [
-        permutation + [true],
-        permutation + [false]
+        permutation.merge({current => true}),
+        permutation.merge({current => false})
       ]
     end
   end
