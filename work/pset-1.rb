@@ -196,10 +196,12 @@ def problem_3
 
   puts "Problem 3b: #{permute_formula(!A) == permute_formula(Nand[A, A])}"
 
-  # Nand[A, !A] = true => Nand[A, Nand[A, A]] = true
-  p permute_formula(A + true)
-  # puts "Problem 3c, i): #{permute_formula(A + true) == permute_formula(Nand[A, Nand[A, A]])}"
-  # puts "Problem 3c, ii): #{permute_formula(A * false) == permute_formula(Nand[A, !A])}"
+  # Force NAND inputs to be different and therefore True: Nand[A, !A] = true 
+  # => Nand[A, Nand[A, A]] = true
+  puts "Problem 3c, i): #{permute_formula(A + true) == permute_formula(Nand[A, Nand[A, A]])}"
+
+  # Then we can construct NAND(True, True) = False using the above:
+  puts "Problem 3c, ii): #{permute_formula(A * false) == permute_formula(Nand[Nand[A, Nand[A, A]], Nand[A, Nand[A, A]]])}"
 end
 
 problem_2
