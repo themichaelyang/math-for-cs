@@ -66,6 +66,13 @@ class Not < Unary
   end
 end
 
+class Nand < Operation
+  def evaluate(values)
+    inner = self.map {|opr| opr.evaluate(values) }
+    !(inner.all?)
+  end
+end
+
 def get_variables(formula)
   case formula
   when Variable
@@ -105,7 +112,7 @@ def permute_formula(formula)
   end.to_h
 end
 
-def truth_table(permutations)
+def permutation_table(permutations)
   variables = permutations.first.first.keys
 
   rows = permutations.map do |perm|
@@ -117,7 +124,7 @@ def truth_table(permutations)
   [variables + ['out']] + rows
 end
 
-def display_table(table)
+def format_table(table)
   header = table.first.map do |col|
     col.to_s.ljust(5)
   end.join(" | ")
@@ -127,24 +134,38 @@ def display_table(table)
     row.map {|entry| entry.to_s.ljust(5)}.join(" | ")
   end
 
-  [header] + [[["-" * 5] * table.first.length].join("-+-")] + rows
+  [[header] + [[["-" * 5] * table.first.length].join("-+-")] + rows].join("\n")
+end
+
+def truth_table(formula)
+  format_table(permutation_table(permute_formula(formula)))
 end
 
 P, Q, R = var(:P), var(:Q), var(:R)
 
-a_left = !(P + (Q * R))
-a_right = !P * (!Q + !R)
-puts "Problem 2a: #{permute_formula(a_left) == permute_formula(a_right)}"
+def problem_2
+  a_left = !(P + (Q * R))
+  a_right = !P * (!Q + !R)
+  puts "Problem 2a: #{permute_formula(a_left) == permute_formula(a_right)}"
 
-puts display_table(truth_table(permute_formula(a_left)))
-puts
-puts display_table(truth_table(permute_formula(a_right)))
-puts
+  puts truth_table(a_left) + "\n\n"
+  puts truth_table(a_right) + "\n\n"
 
-b_left = !(P * (Q + R))
-b_right = !P + (!Q + !R)
-puts "Problem 2b: #{permute_formula(b_left) == permute_formula(b_right)}"
+  b_left = !(P * (Q + R))
+  b_right = !P + (!Q + !R)
+  puts "Problem 2b: #{permute_formula(b_left) == permute_formula(b_right)}"
 
-puts display_table(truth_table(permute_formula(b_left)))
-puts
-puts display_table(truth_table(permute_formula(b_right)))
+  puts truth_table(b_left) + "\n\n"
+  puts truth_table(b_right) + "\n\n"
+end
+
+A, B = var(:A), var(:B)
+
+def problem_3
+  puts "Problem 3a, i): #{permute_formula(A * B) == permute_formula(!Nand[A, B])}"
+  puts "Problem 3a, ii): #{permute_formula(A + B) == permute_formula(Nand[!A, !B])}"
+  puts "Problem 3a, iii): #{permute_formula(!A) == permute_formula(Nand[A, A])}"
+end
+
+problem_2
+problem_3
