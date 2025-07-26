@@ -73,7 +73,7 @@ def get_variables(formula)
   when Operation
     formula.flat_map do |element|
       get_variables(element)
-    end
+    end.uniq
   end
 end
 
@@ -81,7 +81,22 @@ def var(name)
   Variable.new(name)
 end
 
+def permute_variables(variables)
+  current = variables.pop
+  rest = variables
+
+  if current.nil?
+    [[]]
+  else
+    permute_variables(rest).flat_map do |permutation|
+      [
+        permutation + [true],
+        permutation + [false]
+      ]
+    end
+  end
+end
+
 formula = (var(:x) + var(:y)) * var(:z)
-p formula
-
-
+variables = get_variables(formula)
+p permute_variables(variables)
