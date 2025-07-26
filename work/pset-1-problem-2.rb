@@ -16,8 +16,8 @@ class Variable < Struct.new(:name)
   include LogicalOperators
 
   def evaluate(values)
-    if values.include?(@name)
-      values[@name]
+    if values.include?(name)
+      values[name]
     else
       raise KeyError
     end
@@ -62,7 +62,7 @@ end
 
 class Not < Unary
   def evaluate(values)
-    !inner.evaluate(values)
+    !self.first.evaluate(values)
   end
 end
 
@@ -98,8 +98,14 @@ def permute_variables(variables)
 end
 
 formula = (var(:x) + var(:y)) * var(:z)
-variables = get_variables(formula)
-permutations = permute_variables(variables)
+
+def permute_formula(formula)
+  variables = get_variables(formula)
+  permutations = permute_variables(variables)
+  permutations.map do |perm|
+    [perm, formula.evaluate(perm)]
+  end.to_h
+end
 
 P = var(:P)
 Q = var(:Q)
@@ -108,7 +114,7 @@ R = var(:R)
 left = !(P + (Q * R))
 right = !P * (!Q + !R)
 
-p permutations.map do |perm|
-  [perm, left.evaluate(perm)]
-end
+left_truth_table = permute_formula(left)
+right_truth_table = permute_formula(right)
 
+p left_truth_table == right_truth_table
