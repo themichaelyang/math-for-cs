@@ -204,5 +204,68 @@ def problem_3
   puts "Problem 3c, ii): #{permute_formula(A * false) == permute_formula(Nand[Nand[A, Nand[A, A]], Nand[A, Nand[A, A]]])}"
 end
 
+def use_scale_with_coins(coins, left_indexes, right_indexes)
+  coins.values_at(left_indexes).sum <=> coins.values_at(right_indexes).sum
+end
+
+# takes in function strategy
+# strategy accepts fn(left_indexes, right_indexes), # coins -> supposed index of fake coin
+# in this way coins are invisible to the strategy
+#
+# run_strategy(fn) -> [detected: true/false, # uses]
+def run_strategy(strategy, num_coins=12)
+  coins = Array.new(num_coins, 1)
+  fake_index = rand(coins.length)
+  coins[fake_index] = 0.5
+
+  weighings = 0
+  use_scale_and_count = lambda do |left_indexes, right_indexes|
+    weighings += 1
+    use_scale_with_coins(coins, left_indexes, right_indexes)
+  end
+
+  strategy_index = strategy.(use_scale_and_count, num_coins)
+
+  [strategy == fake_index, weighings]
+end
+
+# binary search, essentially
+def binary_strategy_impl(use_scale, first, last)
+  if first == last
+    first
+  else
+    num_coins = last - first + 1
+    weighed_coins = if num_coins.odd?
+      num_coins - 1
+    else
+      num_coins
+    end
+
+    half = weighed_coins / 2
+    left_indexes = (first...(first + half)).to_a
+    right_indexes = ((first + half)...(first + weighed_coins)).to_a
+
+    balance = use_scale(left_indexes, right_indexes) 
+
+    # should be odd, and remaining coin is fake
+    if balance == 0
+      last
+    # right smaller
+    elsif balance == 1
+      binary_strategy_impl(use_scale, right_indexes.first, right_indexes.last)
+    # left smaller
+    elsif balance == -1
+      binary_strategy_impl(use_scale, left_indexes.first, left_indexes.last)
+    end
+  end
+end
+
+def problem_4
+  binary_strategy = lambda { |use_scale, num_coins| binary_strategy_impl(use_scale, 0, num_coins - 1) }
+  detected, weighings = run_strategy(binary_strategy)
+  puts detected, weighings
+end
+
 problem_2
 problem_3
+problem_4
