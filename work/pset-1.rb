@@ -205,14 +205,14 @@ def problem_3
 end
 
 def use_scale_with_coins(coins, left_indexes, right_indexes)
-  coins.values_at(left_indexes).sum <=> coins.values_at(right_indexes).sum
+  coins.values_at(*left_indexes).sum <=> coins.values_at(*right_indexes).sum
 end
 
 # takes in function strategy
 # strategy accepts fn(left_indexes, right_indexes), # coins -> supposed index of fake coin
 # in this way coins are invisible to the strategy
 #
-# run_strategy(fn) -> [detected: true/false, # uses]
+# run_strategy(fn) -> [expected, actual, # uses]
 def run_strategy(strategy, num_coins=12)
   coins = Array.new(num_coins, 1)
   fake_index = rand(coins.length)
@@ -226,7 +226,7 @@ def run_strategy(strategy, num_coins=12)
 
   strategy_index = strategy.(use_scale_and_count, num_coins)
 
-  [strategy == fake_index, weighings]
+  [fake_index, strategy_index, weighings]
 end
 
 # binary search, essentially
@@ -245,7 +245,7 @@ def binary_strategy_impl(use_scale, first, last)
     left_indexes = (first...(first + half)).to_a
     right_indexes = ((first + half)...(first + weighed_coins)).to_a
 
-    balance = use_scale(left_indexes, right_indexes) 
+    balance = use_scale.(left_indexes, right_indexes) 
 
     # should be odd, and remaining coin is fake
     if balance == 0
@@ -262,8 +262,9 @@ end
 
 def problem_4
   binary_strategy = lambda { |use_scale, num_coins| binary_strategy_impl(use_scale, 0, num_coins - 1) }
-  detected, weighings = run_strategy(binary_strategy)
-  puts detected, weighings
+  expected, actual, weighings = run_strategy(binary_strategy)
+
+  puts "Problem 4: expected: #{expected}, actual: #{actual}, weighings: #{weighings}"
 end
 
 problem_2
