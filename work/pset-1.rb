@@ -47,6 +47,8 @@ class Operation < Array
     raise NotImplementedError
   end
 
+  # We need to `p`. Since this is an Array, `puts` will always print
+  # element by element even if we override `to_s`.
   def inspect
     "#{self.class.name}#{super}"
   end
@@ -185,23 +187,42 @@ A, B = var(:A), var(:B)
 
 def problem_3
   # NAND(...) is NOT(AND(...)), so NOT(NOT(AND(...))) = AND(...)
-  puts "Problem 3a, i): #{permute_formula(A * B) == permute_formula(!Nand[A, B])}"
+  and_in_nand = !Nand[A, B]
+  puts "Problem 3a, i): #{permute_formula(A * B) == permute_formula(and_in_nand)}"
+  p and_in_nand
+  puts
 
   # NAND is only False when both are True, so NOTing each side means both sides to be False to be False.
-  puts "Problem 3a, ii): #{permute_formula(A + B) == permute_formula(Nand[!A, !B])}"
+  or_in_nand = Nand[!A, !B]
+  puts "Problem 3a, ii): #{permute_formula(A + B) == permute_formula(or_in_nand)}"
+  p or_in_nand
+  puts
 
   # Similar observation used for Implies, but Implies is only False when RHS is False, so we NOT it.
-  puts "Problem 3a, iii): #{permute_formula(Implies[A, B]) == permute_formula(Nand[A, !B])}"
+  implies_in_nand = Nand[A, !B]
+  puts "Problem 3a, iii): #{permute_formula(Implies[A, B]) == permute_formula(implies_in_nand)}"
+  p implies_in_nand
+  puts
   # puts truth_table(Implies[A, B])
 
-  puts "Problem 3b: #{permute_formula(!A) == permute_formula(Nand[A, A])}"
+  not_in_nand = Nand[A, A]
+  puts "Problem 3b: #{permute_formula(!A) == permute_formula(not_in_nand)}"
+  p not_in_nand
+  puts
 
   # Force NAND inputs to be different and therefore True: Nand[A, !A] = true 
   # => Nand[A, Nand[A, A]] = true
-  puts "Problem 3c, i): #{permute_formula(A + true) == permute_formula(Nand[A, Nand[A, A]])}"
+  true_in_nand = Nand[A, Nand[A, A]]
+  puts "Problem 3c, i): #{permute_formula(A + true) == permute_formula(true_in_nand)}"
+  p true_in_nand
+  puts
 
   # Then we can construct NAND(True, True) = False using the above:
-  puts "Problem 3c, ii): #{permute_formula(A * false) == permute_formula(Nand[Nand[A, Nand[A, A]], Nand[A, Nand[A, A]]])}"
+  # false_in_nand = Nand[true_in_nand, true_in_nand]
+  false_in_nand = Nand[Nand[A, Nand[A, A]], Nand[A, Nand[A, A]]]
+  puts "Problem 3c, ii): #{permute_formula(A * false) == permute_formula(false_in_nand)}"
+  p false_in_nand
+  puts
 end
 
 def use_scale_with_coins(coins, left_indexes, right_indexes)
