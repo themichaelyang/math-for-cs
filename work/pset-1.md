@@ -15,7 +15,7 @@ $\forall x \in X$, $T(x) \land S(x) \implies A(x)$
 There are no people who are TA's who did not get A's.
 $\iff$ Everyone who is a TA got an A.
 
-$\nexists x \in X$ such that $T(x) \land A(x)$ 
+$\nexists x \in X$ such that $T(x) \land \lnot A(x)$ 
 
 $\iff \forall x \in X$, $T(x) \implies A(x)$
 
