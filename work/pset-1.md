@@ -4,7 +4,7 @@
 
 **1a)**
 
-$\exist x \in X$ such that $S(x) \land A(x)$
+$\exists x \in X$ such that $S(x) \land A(x)$
 
 **1b)** 
 
