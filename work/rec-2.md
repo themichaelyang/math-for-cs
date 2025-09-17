@@ -88,9 +88,11 @@ $P(n + 1)$: at the end of the day $n + 1$:
 	3. If $p < n$: then all purple already left as well
 	4. So, if $p < n + 1$ then $x = 0, y = r$
 3. If $p > n + 1$
-	1. Then $p > n$, so no people have left
+	1. Then $p > n$, so no people have left.
 	2. Purples see $z$ purples, know it could be either $z$ or $z + 1$.
 	3. Purples don't gain any more information, so nobody leaves.
+
+Therefore, $P(n + 1)$ is true.
 
 
 
